@@ -1,1 +1,4 @@
-click to start game
+To run: 
+   python main.py
+To start the game:
+   click anywhere
