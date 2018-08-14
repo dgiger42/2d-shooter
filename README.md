@@ -1,6 +1,6 @@
 Dependencies: pygame
 
-To run: 
+To run (on Linux): 
    python main.py
 
 To start the game:
