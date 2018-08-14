@@ -1,3 +1,5 @@
+Dependencies: pygame
+
 To run: 
    python main.py
 
