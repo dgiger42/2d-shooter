@@ -14,7 +14,7 @@ def doCollisions():
     for foe in Foe.foes:
         if pygame.sprite.spritecollide(foe, Player.shots, False):
             foe.hp -= 1
-            if type(foe) is Boss and int(foe.hp) in (foe.maxHP * i / foe.numAttacks for i in xrange(1, foe.numAttacks)):  #switch attacks
+            if type(foe) is Boss and int(foe.hp) in (foe.maxHP * i / foe.numAttacks for i in range(1, foe.numAttacks)):  #switch attacks
                 foe.switchAttacks()
         if foe.hp <= 0:
             if type(foe) is Boss:
@@ -29,7 +29,7 @@ def doCollisions():
 def animate():
     screen.fill([200, 200, 255])
     # pygame.draw.line(screen, THECOLORS["red"], (0,0), (300,300), 30)
-    for i in xrange(bob.lives):
+    for i in range(bob.lives):
         screen.blit(bob.image, [1280 - (30 * i), 30])
     if len(Foe.foes) > 0:
         bob.showLaser(screen)
@@ -106,10 +106,10 @@ while running:
         doCollisions()
         removeDeadShots()
         if bob.lives <= 0:
-            print "you lose"
+            print ("you lose")
             running = False
         clock.tick(FRAMERATE)
-    print "fps = ", str(clock.get_fps())
+    print ("fps = ", str(clock.get_fps()))
 pygame.quit()
 
 '''MY GAME:
