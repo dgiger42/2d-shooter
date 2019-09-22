@@ -36,7 +36,7 @@ class FollowShot(Shot):
         v = [targetPos[0] - self.location[0], targetPos[1] - self.location[1]]
         size = sqrt(v[0] ** 2 + v[1] ** 2)
         speed = sqrt(self.velocity[0] ** 2 + self.velocity[1] ** 2)
-        self.velocity = [v[i] / size * speed for i in xrange(len(v))]
+        self.velocity = [v[i] / size * speed for i in range(len(v))]
 
     def move(self):
         self.aim()

@@ -200,7 +200,7 @@ class Boss(Foe):
 
     def attack4(self):
         nShots = 20
-        for i in xrange(3):
+        for i in range(3):
             self.shotAngle += 120
             # Shot.shootGroup(Foe.shots, THECOLORS["red"], self.location, self.shotAngle, 120 / (nShots + 2), nShots, 15, [30, 4])
             self.shootGroup(THECOLORS["red"], self.shotAngle, 120 / (nShots + 2), nShots, 15, [30, 4])
