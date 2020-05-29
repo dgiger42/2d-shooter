@@ -109,42 +109,5 @@ while running:
             print ("you lose")
             running = False
         clock.tick(FRAMERATE)
-    print ("fps = ", str(clock.get_fps()))
+    # print ("fps = ", str(clock.get_fps()))
 pygame.quit()
-
-'''MY GAME:
-
-select difficulty?
-don't close on loss?
-black background?
-
-make health method? health bar for bob?
-
-
-Foes too hard at high levels
-
-
-make bosses of different strength
-make attacks do different damage
-switch to health bar for me
-could make experience based on level
-space bar to challenge a boss?
-otherwise enemies keep coming
-make infinite foes and just go by?
-more types of foes?
-	class for each?
-	could do ones that shoot spray at bob
-level system:
-	more health w/ high level
-	reset health when leveling
-
-BOSSES
-	could each do one of the attacks
-	could do combinations
-		could alternate
-		could do several at once
-		could randomly choose attack
-
-
-BUGS - killShotsOffScreen() misses some
-'''

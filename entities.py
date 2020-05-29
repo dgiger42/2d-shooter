@@ -91,7 +91,7 @@ class Foe(Entity):
         self.size = [3 * level + 20] * 2
         Entity.__init__(self, self.size, [200,0,0], [randint(20, 1200), 0], level)
         self.yLimit = randint(1, 450)  # sets place where foe stops moving
-        self.speed =  [0, 1 + randint(1,7) * 30 / FRAMERATE]
+        self.speed =  [0, 1 + randint(1,7) * 30 // FRAMERATE]
         self.maxHP = level + 2  #the right one
         # self.maxHP = level/3 + 1
         self.hp = self.maxHP
