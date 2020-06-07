@@ -78,36 +78,43 @@ def start():
     pygame.time.set_timer(FOE_SHOT_TIMER, 500)
     Foe.addFoe(bob)
 
-initGame()
-running = True
-started = False
 
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.MOUSEBUTTONUP:
-            started = True
-            start()
-        if event.type == pygame.QUIT:
-            running = False
-        if event.type == pygame.MOUSEMOTION:  # move
-            bob.rect.centerx, bob.rect.centery = bob.location = event.pos
-        if event.type == USEREVENT + 1:  # bob invincible timer
-            bob.recolor()
-        if event.type == USEREVENT + 2:
-            bob.fire(screen)
-        if event.type == USEREVENT + 4:
-            Foe.addFoe(bob)
-        if event.type == FOE_SHOT_TIMER:
-            for foe in Foe.foes:
-                foe.fire()
+if __name__ == "__main__":
+    initGame()
+    running = True
+    started = False
 
-    animate()
-    if started:
-        doCollisions()
-        removeDeadShots()
-        if bob.lives <= 0:
-            print ("you lose")
-            running = False
+    # while True:
+    #     for event in pygame.event.get():
+
+
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONUP:
+                started = True
+                start()
+            elif event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.MOUSEMOTION:  # move
+                bob.rect.centerx, bob.rect.centery = bob.location = event.pos
+            if started:
+                if event.type == USEREVENT + 1:  # bob invincible timer
+                    bob.recolor()
+                elif event.type == USEREVENT + 2:
+                    bob.fire(screen)
+                elif event.type == USEREVENT + 4:
+                    Foe.addFoe(bob)
+                elif event.type == FOE_SHOT_TIMER:
+                    for foe in Foe.foes:
+                        foe.fire()
+
+        animate()
+        if started:
+            doCollisions()
+            removeDeadShots()
+            if bob.lives <= 0:
+                print ("you lose")
+                running = False
         clock.tick(FRAMERATE)
-    # print ("fps = ", str(clock.get_fps()))
-pygame.quit()
+        # print ("fps = ", str(clock.get_fps()))
+    pygame.quit()
