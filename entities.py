@@ -85,7 +85,7 @@ class Foe(Entity):
     foes = []
     nextLevel = 0
     nextCanAim = True
-    nFoes = 3
+    nFoes = 2
 
     def __init__(self, level , canAim, target):
         self.size = [3 * level + 20] * 2
@@ -138,7 +138,7 @@ class Boss(Foe):
     def __init__(self, target):
         Foe.__init__(self, 80, False, target)
         pygame.time.set_timer(FOE_SHOOT_EVENT, 100)
-        self.hp = self.maxHP = 200  # should be more ###################################################################
+        self.hp = self.maxHP = 100  # should be more ###################################################################
         self.attackIntervals = (100000, 100, 300, 400, 1000) # timers for each attack
         self.attacks = (self.laserAttack, self.attack1, self.attack2, self.attack3, self.attack4)
         self.numAttacks = len(self.attacks)

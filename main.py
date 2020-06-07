@@ -9,10 +9,10 @@ from constants import *
 
 
 def doCollisions():
-    if pygame.sprite.spritecollide(bob, Foe.shots, False) or pygame.sprite.spritecollide(bob, Foe.foes, False):
+    if pygame.sprite.spritecollideany(bob, Foe.shots) or pygame.sprite.spritecollide(bob, Foe.foes, False):
         bob.getHit()
     for foe in Foe.foes:
-        if pygame.sprite.spritecollide(foe, Player.shots, False):
+        if pygame.sprite.spritecollideany(foe, Player.shots):
             foe.hp -= 1
             if type(foe) is Boss and int(foe.hp) in (foe.maxHP * i // foe.numAttacks for i in range(1, foe.numAttacks)):  #switch attacks
                 foe.switchAttacks()
@@ -21,9 +21,7 @@ def doCollisions():
                 Boss.defeated = True
             Foe.foes.remove(foe)
             bob.levelUp()
-    for shot in Player.shots:
-        if pygame.sprite.spritecollide(shot, Foe.foes, False):
-            Player.shots.remove(shot)
+    Player.shots = [shot for shot in Player.shots if not pygame.sprite.spritecollideany(shot, Foe.foes)]
 
 
 def animate():
