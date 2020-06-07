@@ -38,7 +38,7 @@ class Player(Entity):
     def __init__(self):
         Entity.__init__(self, [15, 15], THECOLORS["black"], [0,0], 1)
         self.lives = 6
-        pygame.time.set_timer(USEREVENT + 2, 400)  # bob's shot timer
+        pygame.time.set_timer(BOB_SHOOT_EVENT, 400)  # bob's shot timer
         self.invincible = False
         self.hasLaser = False
 
@@ -48,13 +48,13 @@ class Player(Entity):
             self.image = self.image_surface.convert()
             self.lives -= 1
             self.invincible = True
-            pygame.time.set_timer(USEREVENT + 1, 1500)  # gives player 1.5 sec after hit
+            pygame.time.set_timer(INVINC_EVENT, 1500)  # gives player 1.5 sec after hit
 
     def recolor(self):
         self.image_surface.fill([0, 0, 0])
         self.image = self.image_surface.convert()
         self.invincible = False
-        pygame.time.set_timer(USEREVENT + 1, 0)  # bob invincibility timer
+        pygame.time.set_timer(INVINC_EVENT, 0)  # bob invincibility timer
 
     def fire(self, screen):
         nShots = self.level
@@ -85,7 +85,7 @@ class Foe(Entity):
     foes = []
     nextLevel = 0
     nextCanAim = True
-    nFoes = 10
+    nFoes = 3
 
     def __init__(self, level , canAim, target):
         self.size = [3 * level + 20] * 2
@@ -137,7 +137,7 @@ class Boss(Foe):
 
     def __init__(self, target):
         Foe.__init__(self, 80, False, target)
-        pygame.time.set_timer(FOE_SHOT_TIMER, 100)
+        pygame.time.set_timer(FOE_SHOOT_EVENT, 100)
         self.hp = self.maxHP = 200  # should be more ###################################################################
         self.attackIntervals = (100000, 100, 300, 400, 1000) # timers for each attack
         self.attacks = (self.laserAttack, self.attack1, self.attack2, self.attack3, self.attack4)
@@ -153,7 +153,7 @@ class Boss(Foe):
         self.curAttackNum += 1
         self.laser = None
         Foe.shots = []
-        pygame.time.set_timer(FOE_SHOT_TIMER, self.attackIntervals[self.curAttackNum])
+        pygame.time.set_timer(FOE_SHOOT_EVENT, self.attackIntervals[self.curAttackNum])
         self.fire()
 
     def show(self, screen):

@@ -14,7 +14,7 @@ def doCollisions():
     for foe in Foe.foes:
         if pygame.sprite.spritecollide(foe, Player.shots, False):
             foe.hp -= 1
-            if type(foe) is Boss and int(foe.hp) in (foe.maxHP * i / foe.numAttacks for i in range(1, foe.numAttacks)):  #switch attacks
+            if type(foe) is Boss and int(foe.hp) in (foe.maxHP * i // foe.numAttacks for i in range(1, foe.numAttacks)):  #switch attacks
                 foe.switchAttacks()
         if foe.hp <= 0:
             if type(foe) is Boss:
@@ -74,8 +74,8 @@ def initGame():
     bob = Player()
 
 def start():
-    pygame.time.set_timer(USEREVENT + 4, FOE_INTERVAL)  # sets time between foe entry
-    pygame.time.set_timer(FOE_SHOT_TIMER, 500)
+    pygame.time.set_timer(FOE_ENTER_EVENT, FOE_INTERVAL)  # sets time between foe entry
+    pygame.time.set_timer(FOE_SHOOT_EVENT, 500)
     Foe.addFoe(bob)
 
 
@@ -83,9 +83,6 @@ if __name__ == "__main__":
     initGame()
     running = True
     started = False
-
-    # while True:
-    #     for event in pygame.event.get():
 
 
     while running:
@@ -98,13 +95,13 @@ if __name__ == "__main__":
             elif event.type == pygame.MOUSEMOTION:  # move
                 bob.rect.centerx, bob.rect.centery = bob.location = event.pos
             if started:
-                if event.type == USEREVENT + 1:  # bob invincible timer
+                if event.type == INVINC_EVENT:  # bob invincible timer
                     bob.recolor()
-                elif event.type == USEREVENT + 2:
+                elif event.type == BOB_SHOOT_EVENT:
                     bob.fire(screen)
-                elif event.type == USEREVENT + 4:
+                elif event.type == FOE_ENTER_EVENT:
                     Foe.addFoe(bob)
-                elif event.type == FOE_SHOT_TIMER:
+                elif event.type == FOE_SHOOT_EVENT:
                     for foe in Foe.foes:
                         foe.fire()
 
