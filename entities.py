@@ -26,9 +26,8 @@ class Entity(pygame.sprite.Sprite):
         theta = degrees(atan2(endPoint[1] - self.location[1], endPoint[0] - self.location[0]))
         self.shootAngle(colour, theta, speed, dimensions)
 
-    def shootGroup(self, colour, startAngle, angleBtwShots, noShots, speed = 5, size=[10, 3]):
+    def shootGroup(self, colour, startAngle, angleBtwShots, noShots, speed=5, size=[10, 3]):
         for i in range(noShots):
-            # Shot.shootAngle(shotList, startPoint, colour, startAngle - (i * (angleBtwShots)), speed, size)
             self.shootAngle(colour, startAngle - (i * angleBtwShots), speed, size)
 
 
@@ -37,7 +36,7 @@ class Player(Entity):
 
     def __init__(self):
         Entity.__init__(self, [15, 15], THECOLORS["black"], [0,0], 1)
-        self.lives = 6
+        self.lives = 5
         pygame.time.set_timer(BOB_SHOOT_EVENT, 400)  # bob's shot timer
         self.invincible = False
         self.hasLaser = False
@@ -54,13 +53,12 @@ class Player(Entity):
         self.image_surface.fill([0, 0, 0])
         self.image = self.image_surface.convert()
         self.invincible = False
-        pygame.time.set_timer(INVINC_EVENT, 0)  # bob invincibility timer
+        pygame.time.set_timer(INVINC_EVENT, 0)
 
     def fire(self, screen):
         nShots = self.level
         spreadAngle = 40 - int(30/ pow(self.level, .4))
         angleBtwShots = spreadAngle / float(nShots + 1)
-        # self.shootGroup(THECOLORS["black"], -75, 3, 11, 15) #original shooting
         self.shootGroup(THECOLORS["black"], -((90 - spreadAngle/2) + angleBtwShots), angleBtwShots, nShots, 15, size = [5, 5])
         self.laserAttack(screen)
 
@@ -78,22 +76,19 @@ class Player(Entity):
             Foe.foes[0].hp -= .1
 
 
-
-
 class Foe(Entity):
     shots = []
     foes = []
     nextLevel = 0
     nextCanAim = True
-    nFoes = 2
+    nFoes = 10
 
     def __init__(self, level , canAim, target):
         self.size = [3 * level + 20] * 2
         Entity.__init__(self, self.size, [200,0,0], [randint(20, 1200), 0], level)
         self.yLimit = randint(1, 450)  # sets place where foe stops moving
-        self.speed =  [0, 1 + randint(1,7) * 30 // FRAMERATE]
-        self.maxHP = level + 2  #the right one
-        # self.maxHP = level/3 + 1
+        self.speed = [0, 1 + randint(1,7) * 30 // FRAMERATE]
+        self.maxHP = 2 + int(level ** 1.5)
         self.hp = self.maxHP
         self.canAim = canAim
         self.target = target
@@ -108,10 +103,11 @@ class Foe(Entity):
             Foe.foes.append(Boss(target))
 
     def updatePos(self):
-        '''moves foe and makes it stop at its yLimit'''
+        """moves foe and makes it stop at its yLimit"""
         if self.location[1] < self.yLimit:
-            self.location[0] += self.speed[0]
-            self.location[1] += self.speed[1]
+            # self.location[0] += self.speed[0]
+            # self.location[1] += self.speed[1]
+            self.location[:] = list(map(sum, zip(self.location, self.speed)))
             self.rect = self.rect.move(self.speed)
 
     def show(self, screen):
@@ -124,12 +120,10 @@ class Foe(Entity):
 
     def fire(self):
         if self.canAim:
-            # Shot.shootTarget(Foe.shots, self.location, self.target.location, THECOLORS["blue"])
             self.shootTarget(self.target.location, THECOLORS["blue"])
         else:
             nShots = 5 + int(self.level ** .6)
             self.shootGroup(THECOLORS["red"], randint(1, 360), (360 / nShots), nShots)
-            # Shot.shootGroup(Foe.shots, THECOLORS["red"], self.location, randint(1, 360), (360 / nShots), nShots)
 
 
 class Boss(Foe):
@@ -138,8 +132,8 @@ class Boss(Foe):
     def __init__(self, target):
         Foe.__init__(self, 80, False, target)
         pygame.time.set_timer(FOE_SHOOT_EVENT, 100)
-        self.hp = self.maxHP = 100  # should be more ###################################################################
-        self.attackIntervals = (100000, 100, 300, 400, 1000) # timers for each attack
+        self.hp = self.maxHP = 1100  # should be more ###################################################
+        self.attackIntervals = (-1, 100, 300, 400, 1000) # timers for each attack
         self.attacks = (self.laserAttack, self.attack1, self.attack2, self.attack3, self.attack4)
         self.numAttacks = len(self.attacks)
         self.shotAngle = 0
@@ -202,6 +196,5 @@ class Boss(Foe):
         nShots = 20
         for i in range(3):
             self.shotAngle += 120
-            # Shot.shootGroup(Foe.shots, THECOLORS["red"], self.location, self.shotAngle, 120 / (nShots + 2), nShots, 15, [30, 4])
             self.shootGroup(THECOLORS["red"], self.shotAngle, 120 / (nShots + 2), nShots, 15, [30, 4])
         self.shotAngle += randint(1, 120)

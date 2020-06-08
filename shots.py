@@ -26,6 +26,7 @@ class Shot(pygame.sprite.Sprite):
 class FollowShot(Shot):
 
     duration = 4
+
     def __init__(self, location, dimensions, velocity, target):
         Shot.__init__(self, location, dimensions, velocity, THECOLORS["yellow"])
         self.target = target

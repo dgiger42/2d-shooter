@@ -12,7 +12,7 @@ def doCollisions():
     if pygame.sprite.spritecollideany(bob, Foe.shots) or pygame.sprite.spritecollide(bob, Foe.foes, False):
         bob.getHit()
     for foe in Foe.foes:
-        if pygame.sprite.spritecollideany(foe, Player.shots):
+        for shot in pygame.sprite.spritecollide(foe, Player.shots, False):
             foe.hp -= 1
             if type(foe) is Boss and int(foe.hp) in (foe.maxHP * i // foe.numAttacks for i in range(1, foe.numAttacks)):  #switch attacks
                 foe.switchAttacks()
@@ -75,6 +75,7 @@ def start():
     pygame.time.set_timer(FOE_ENTER_EVENT, FOE_INTERVAL)  # sets time between foe entry
     pygame.time.set_timer(FOE_SHOOT_EVENT, 500)
     Foe.addFoe(bob)
+    bob.fire(screen)
 
 
 if __name__ == "__main__":
