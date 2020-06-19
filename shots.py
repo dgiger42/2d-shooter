@@ -22,6 +22,8 @@ class Shot(pygame.sprite.Sprite):
         self.location = [self.location[0] + self.velocity[0], self.location[1] + self.velocity[1]]
         self.rect.centerx, self.rect.centery = map(int, self.location)
 
+    def isOffScreen(self):
+        return self.rect.left > 1350 or self.rect.right < 0 or self.rect.top > 700 or self.rect.bottom < 0
 
 class FollowShot(Shot):
 

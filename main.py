@@ -14,7 +14,7 @@ def doCollisions():
     for foe in Foe.foes:
         for shot in pygame.sprite.spritecollide(foe, Player.shots, False):
             foe.hp -= 1
-            if type(foe) is Boss and int(foe.hp) in (foe.maxHP * i // foe.numAttacks for i in range(1, foe.numAttacks)):  #switch attacks
+            if type(foe) is Boss and int(foe.hp) in (foe.maxHP * i // foe.numAttacks for i in range(1, foe.numAttacks)):
                 foe.switchAttacks()
         if foe.hp <= 0:
             if type(foe) is Boss:
@@ -44,16 +44,10 @@ def animate():
     pygame.display.flip()
 
 def removeDeadShots():  #has bug - doesn't kill ALL of the shots that are offscreen
-    '''stop moving shots if they're off the screen or past duration'''
-    for shot in Player.shots:
-        if shot.rect.left > 1350 or shot.rect.right < 0 \
-                or shot.rect.top > 700 or shot.rect.bottom < 0:
-            Player.shots.remove(shot)
-    for shot in Foe.shots:
-        if shot.rect.left > 1350 or shot.rect.right < 0 \
-                or shot.rect.top > 700 or shot.rect.bottom < 0 \
-                or (type(shot) is FollowShot and time() - shot.firedTime > FollowShot.duration):
-            Foe.shots.remove(shot)
+    """stop moving shots if they're off the screen or past duration"""
+    Player.shots = [shot for shot in Player.shots if not shot.isOffScreen()]
+    Foe.shots = [shot for shot in Foe.shots if not shot.isOffScreen() or
+                    (type(shot) is FollowShot and time() - shot.firedTime > FollowShot.duration)]
 
 
 def showWinMsg():
@@ -82,7 +76,6 @@ if __name__ == "__main__":
     initGame()
     running = True
     started = False
-
 
     while running:
         for event in pygame.event.get():

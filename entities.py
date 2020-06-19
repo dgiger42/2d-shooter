@@ -8,6 +8,7 @@ from laser import Laser
 
 
 class Entity(pygame.sprite.Sprite):
+    shots = []
 
     def __init__(self, dimensions, color, location, level):
         pygame.sprite.Sprite.__init__(self)
@@ -18,15 +19,15 @@ class Entity(pygame.sprite.Sprite):
         self.rect.centerx, self.rect.centery = self.location = location
         self.level = level
 
-    def shootAngle(self, colour, theta, speed=3, dimensions=[10, 3]):
+    def shootAngle(self, colour, theta, speed=3, dimensions=(10, 3)):
         velocity = [speed * cos(radians(theta)), speed * sin(radians(theta))]
         self.shots.append(Shot(self.location, dimensions, velocity, colour))
 
-    def shootTarget(self, endPoint, colour, speed = 7, dimensions = [10,3]):
+    def shootTarget(self, endPoint, colour, speed=7, dimensions=(10, 3)):
         theta = degrees(atan2(endPoint[1] - self.location[1], endPoint[0] - self.location[0]))
         self.shootAngle(colour, theta, speed, dimensions)
 
-    def shootGroup(self, colour, startAngle, angleBtwShots, noShots, speed=5, size=[10, 3]):
+    def shootGroup(self, colour, startAngle, angleBtwShots, noShots, speed=5, size=(10, 3)):
         for i in range(noShots):
             self.shootAngle(colour, startAngle - (i * angleBtwShots), speed, size)
 
@@ -57,9 +58,9 @@ class Player(Entity):
 
     def fire(self, screen):
         nShots = self.level
-        spreadAngle = 40 - int(30/ pow(self.level, .4))
+        spreadAngle = 40 - int(30 / pow(self.level, .4))
         angleBtwShots = spreadAngle / float(nShots + 1)
-        self.shootGroup(THECOLORS["black"], -((90 - spreadAngle/2) + angleBtwShots), angleBtwShots, nShots, 15, size = [5, 5])
+        self.shootGroup(THECOLORS["black"], -((90 - spreadAngle/2) + angleBtwShots), angleBtwShots, nShots, 15, size=[5, 5])
         self.laserAttack(screen)
 
     def levelUp(self):
@@ -73,7 +74,7 @@ class Player(Entity):
 
     def laserAttack(self, screen):
         if len(Foe.foes) > 0 and self.hasLaser:
-            Foe.foes[0].hp -= .1
+            Foe.foes[0].hp -= .3
 
 
 class Foe(Entity):
@@ -132,7 +133,7 @@ class Boss(Foe):
     def __init__(self, target):
         Foe.__init__(self, 80, False, target)
         pygame.time.set_timer(FOE_SHOOT_EVENT, 100)
-        self.hp = self.maxHP = 1100  # should be more ###################################################
+        self.hp = self.maxHP = 400  # should be ~1100
         self.attackIntervals = (-1, 100, 300, 400, 1000) # timers for each attack
         self.attacks = (self.laserAttack, self.attack1, self.attack2, self.attack3, self.attack4)
         self.numAttacks = len(self.attacks)
