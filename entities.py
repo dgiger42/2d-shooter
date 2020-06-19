@@ -11,7 +11,7 @@ class Entity(pygame.sprite.Sprite):
     shots = []
 
     def __init__(self, dimensions, color, location, level):
-        pygame.sprite.Sprite.__init__(self)
+        super().__init__()
         self.image_surface = pygame.surface.Surface(dimensions)
         self.image_surface.fill(color)
         self.image = self.image_surface.convert()
@@ -36,7 +36,7 @@ class Player(Entity):
     shots = []
 
     def __init__(self):
-        Entity.__init__(self, [15, 15], THECOLORS["black"], [0,0], 1)
+        super().__init__([15, 15], THECOLORS["black"], [0, 0], 1)
         self.lives = 5
         pygame.time.set_timer(BOB_SHOOT_EVENT, 400)  # bob's shot timer
         self.invincible = False
@@ -86,7 +86,7 @@ class Foe(Entity):
 
     def __init__(self, level , canAim, target):
         self.size = [3 * level + 20] * 2
-        Entity.__init__(self, self.size, [200,0,0], [randint(20, 1200), 0], level)
+        super().__init__(self.size, [200,0,0], [randint(20, 1200), 0], level)
         self.yLimit = randint(1, 450)  # sets place where foe stops moving
         self.speed = [0, 1 + randint(1,7) * 30 // FRAMERATE]
         self.maxHP = 2 + int(level ** 1.5)
@@ -129,9 +129,9 @@ class Boss(Foe):
     defeated = False
 
     def __init__(self, target):
-        Foe.__init__(self, 80, False, target)
+        super().__init__(80, False, target)
         pygame.time.set_timer(FOE_SHOOT_EVENT, 100)
-        self.hp = self.maxHP = 400  # should be ~1100
+        self.hp = self.maxHP = 300  # should be ~1100
         self.attackIntervals = (-1, 100, 300, 400, 1000) # timers for each attack
         self.attacks = (self.laserAttack, self.attack1, self.attack2, self.attack3, self.attack4)
         self.numAttacks = len(self.attacks)
@@ -150,12 +150,12 @@ class Boss(Foe):
         self.fire()
 
     def show(self, screen):
-        super(Boss, self).show(screen)
+        super().show(screen)
         if self.laser:
             self.laser.show(screen)
 
     def updatePos(self):
-        super(Boss, self).updatePos()
+        super().updatePos()
         if self.laser:
             self.laser.move(self.location)
 

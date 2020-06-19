@@ -1,8 +1,5 @@
 from colordict import THECOLORS
 import pygame
-from math import atan2, cos, sin, radians, degrees, sqrt
-from random import randint
-from shots import FollowShot, Shot
 from time import time
 from entities import *
 from constants import *
@@ -44,7 +41,7 @@ def animate():
     pygame.display.flip()
 
 
-def removeDeadShots(): 
+def removeDeadShots():
     """stop moving shots if they're off the screen or past duration"""
     Player.shots = [shot for shot in Player.shots if not shot.isOffScreen()]
     Foe.shots = [shot for shot in Foe.shots if not shot.isOffScreen() or
@@ -105,7 +102,7 @@ if __name__ == "__main__":
             doCollisions()
             removeDeadShots()
             if bob.lives <= 0:
-                print ("you lose")
+                print("you lose")
                 running = False
         clock.tick(FRAMERATE)
         # print ("fps = ", str(clock.get_fps()))

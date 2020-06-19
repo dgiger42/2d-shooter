@@ -8,7 +8,7 @@ from constants import *
 class Shot(pygame.sprite.Sprite):
 
     def __init__(self, location, dimensions, velocity, colour):
-        pygame.sprite.Sprite.__init__(self)
+        super().__init__()
         image_surface = pygame.surface.Surface(dimensions)
         image_surface.fill(colour)
         self.image = image_surface.convert()
@@ -30,7 +30,7 @@ class FollowShot(Shot):
     duration = 4
 
     def __init__(self, location, dimensions, velocity, target):
-        Shot.__init__(self, location, dimensions, velocity, THECOLORS["yellow"])
+        super().__init__(location, dimensions, velocity, THECOLORS["yellow"])
         self.target = target
         self.timeFired = time()
 
@@ -43,4 +43,4 @@ class FollowShot(Shot):
 
     def move(self):
         self.aim()
-        super(FollowShot, self).move()
+        super().move()
