@@ -43,17 +43,19 @@ def animate():
     screen.blit(bob.image, bob.rect)
     pygame.display.flip()
 
-def removeDeadShots():  #has bug - doesn't kill ALL of the shots that are offscreen
+
+def removeDeadShots(): 
     """stop moving shots if they're off the screen or past duration"""
     Player.shots = [shot for shot in Player.shots if not shot.isOffScreen()]
     Foe.shots = [shot for shot in Foe.shots if not shot.isOffScreen() or
-                    (type(shot) is FollowShot and time() - shot.firedTime > FollowShot.duration)]
+                 (type(shot) is FollowShot and time() - shot.timeFired > FollowShot.duration)]
 
 
 def showWinMsg():
     fontSize = pygame.font.Font(None, 300)  # sets fontSize
     winMsg = fontSize.render('YOU WON!!!', 1, THECOLORS["white"])
     screen.blit(winMsg, [20, 100])
+
 
 def initGame():
     global screen, clock, bob
@@ -64,6 +66,7 @@ def initGame():
     clock = pygame.time.Clock()
     screen.fill([170, 170, 250])
     bob = Player()
+
 
 def start():
     pygame.time.set_timer(FOE_ENTER_EVENT, FOE_INTERVAL)  # sets time between foe entry

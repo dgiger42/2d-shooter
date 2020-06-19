@@ -82,7 +82,7 @@ class Foe(Entity):
     foes = []
     nextLevel = 0
     nextCanAim = True
-    nFoes = 10
+    nFoes = 5
 
     def __init__(self, level , canAim, target):
         self.size = [3 * level + 20] * 2
@@ -106,8 +106,6 @@ class Foe(Entity):
     def updatePos(self):
         """moves foe and makes it stop at its yLimit"""
         if self.location[1] < self.yLimit:
-            # self.location[0] += self.speed[0]
-            # self.location[1] += self.speed[1]
             self.location[:] = list(map(sum, zip(self.location, self.speed)))
             self.rect = self.rect.move(self.speed)
 
