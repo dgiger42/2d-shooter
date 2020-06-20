@@ -3,7 +3,8 @@ import pygame
 from colordict import THECOLORS
 from constants import *
 
-class Laser():
+
+class Laser:
 
     def __init__(self, startPoint, target, direction = 90):
         self.startPoint = startPoint

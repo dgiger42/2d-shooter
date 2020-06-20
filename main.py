@@ -3,6 +3,7 @@ import pygame
 from time import time
 from entities import *
 from constants import *
+import pygame.freetype
 
 
 def doCollisions():
@@ -16,6 +17,7 @@ def doCollisions():
         if foe.hp <= 0:
             if type(foe) is Boss:
                 Boss.defeated = True
+                Foe.shots = []
             Foe.foes.remove(foe)
             bob.levelUp()
     Player.shots = [shot for shot in Player.shots if not pygame.sprite.spritecollideany(shot, Foe.foes)]
@@ -35,8 +37,7 @@ def animate():
         shot.move()
         screen.blit(shot.image, shot.rect)
     if Boss.defeated:
-        showWinMsg()
-        Foe.shots = []
+        showMsg('YOU WON!!!')
     screen.blit(bob.image, bob.rect)
     pygame.display.flip()
 
@@ -48,10 +49,9 @@ def removeDeadShots():
                  (type(shot) is FollowShot and time() - shot.timeFired > FollowShot.duration)]
 
 
-def showWinMsg():
-    fontSize = pygame.font.Font(None, 300)  # sets fontSize
-    winMsg = fontSize.render('YOU WON!!!', 1, THECOLORS["white"])
-    screen.blit(winMsg, [20, 100])
+def showMsg(msg):
+    font = pygame.freetype.Font(None, 230)  
+    font.render_to(screen, [20, 100], msg, THECOLORS["white"])
 
 
 def initGame():
@@ -69,7 +69,7 @@ def start():
     pygame.time.set_timer(FOE_ENTER_EVENT, FOE_INTERVAL)  # sets time between foe entry
     pygame.time.set_timer(FOE_SHOOT_EVENT, 500)
     Foe.addFoe(bob)
-    bob.fire(screen)
+    bob.fire()
 
 
 if __name__ == "__main__":
@@ -90,7 +90,7 @@ if __name__ == "__main__":
                 if event.type == INVINC_EVENT:  # bob invincible timer
                     bob.recolor()
                 elif event.type == BOB_SHOOT_EVENT:
-                    bob.fire(screen)
+                    bob.fire()
                 elif event.type == FOE_ENTER_EVENT:
                     Foe.addFoe(bob)
                 elif event.type == FOE_SHOOT_EVENT:

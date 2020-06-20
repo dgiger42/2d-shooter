@@ -57,16 +57,19 @@ class Player(Entity):
         self.invincible = False
         pygame.time.set_timer(INVINC_EVENT, 0)
 
-    def fire(self, screen):
+    def fire(self):
         nShots = self.level
         spreadAngle = 40 - int(30 / pow(self.level, .4))
         angleBtwShots = spreadAngle / float(nShots + 1)
         self.shootGroup(THECOLORS["black"], -((90 - spreadAngle/2) + angleBtwShots), angleBtwShots, nShots, 15, size=[5, 5])
-        self.laserAttack(screen)
+
+        #do laser
+        if len(Foe.foes) > 0 and self.hasLaser:
+            self.getTarget().hp -= .3
 
     def levelUp(self):
         self.level += 1
-        if self.level == 4:
+        if self.level >= 2:
             self.hasLaser = True
 
     def getTarget(self):
@@ -78,23 +81,19 @@ class Player(Entity):
         if len(Foe.foes) > 0 and self.hasLaser:
             pygame.draw.line(screen, THECOLORS["gold"], self.location, self.getTarget().location, 6)
 
-    def laserAttack(self, screen):
-        if len(Foe.foes) > 0 and self.hasLaser:
-            self.getTarget().hp -= .3
-
 
 class Foe(Entity):
     shots = []
     foes = []
     nextLevel = 0
     nextCanAim = True
-    nFoes = 6
+    nFoes = 1
 
     def __init__(self, level , canAim, target):
         self.size = [3 * level + 20] * 2
-        super().__init__(self.size, [185,0,0], [randint(20, 1200), 0], level)
+        super().__init__(self.size, [185, 0, 0], [randint(20, 1200), 0], level)
         self.yLimit = randint(1, 450)  # sets place where foe stops moving
-        self.speed = [0, 1 + randint(1,7) * 30 // FRAMERATE]
+        self.speed = [0, 1 + randint(1, 7) * 30 // FRAMERATE]
         self.maxHP = 2 + int(level ** 1.5)
         self.hp = self.maxHP
         self.canAim = canAim
@@ -137,7 +136,7 @@ class Boss(Foe):
     def __init__(self, target):
         super().__init__(80, False, target)
         pygame.time.set_timer(FOE_SHOOT_EVENT, 100)
-        self.hp = self.maxHP = 200  # should be ~1100
+        self.hp = self.maxHP = 50  # should be ~1100
         self.attackIntervals = (-1, 100, 300, 400, 1000) # timers for each attack
         self.attacks = (self.laserAttack, self.spiralAttack, self.attack2, self.attack3, self.wallOfDeath)
         self.shotAngle = 0
@@ -174,6 +173,7 @@ class Boss(Foe):
     def laserAttack(self):
         if not self.laser:
             self.laser = Laser(self.location, self.target)
+
 
     def spiralAttack(self):
         nShots = 7
