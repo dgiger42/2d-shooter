@@ -18,10 +18,9 @@ def doCollisions():
             if type(foe) is Boss:
                 Boss.defeated = True
                 Foe.shots = []
-            Foe.foes.remove(foe)
             bob.levelUp()
     Player.shots = [shot for shot in Player.shots if not pygame.sprite.spritecollideany(shot, Foe.foes)]
-
+    Foe.foes = [foe for foe in Foe.foes if foe.hp > 0]
 
 def animate():
     screen.fill([200, 200, 255])
@@ -50,7 +49,7 @@ def removeDeadShots():
 
 
 def showMsg(msg):
-    font = pygame.freetype.Font(None, 230)  
+    font = pygame.freetype.Font(None, 230)
     font.render_to(screen, [20, 100], msg, THECOLORS["white"])
 
 

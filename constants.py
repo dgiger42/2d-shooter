@@ -8,3 +8,5 @@ FOE_INTERVAL = 1000  # was 3500
 # FOE_INTERVAL = 2000
 
 FRAMERATE = 100  # raise it, currently can go through laser
+
+DEBUG = False
