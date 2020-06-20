@@ -34,7 +34,7 @@ class Entity(pygame.sprite.Sprite):
 
 class Player(Entity):
     shots = []
-    MAX_LIVES = 20
+    MAX_LIVES = 5 if not DEBUG else 25
 
     def __init__(self):
         super().__init__([15, 15], THECOLORS["black"], [0, 0], 1)
@@ -69,7 +69,7 @@ class Player(Entity):
 
     def levelUp(self):
         self.level += 1
-        if self.level >= 2:
+        if self.level >= (4 if not DEBUG else 2):
             self.hasLaser = True
 
     def getTarget(self):
@@ -87,7 +87,7 @@ class Foe(Entity):
     foes = []
     nextLevel = 0
     nextCanAim = True
-    nFoes = 5
+    nFoes = 10 if not DEBUG else 2
 
     def __init__(self, level , canAim, target):
         self.size = [3 * level + 20] * 2
@@ -136,8 +136,8 @@ class Boss(Foe):
     def __init__(self, target):
         super().__init__(80, False, target)
         pygame.time.set_timer(FOE_SHOOT_EVENT, 100)
-        self.hp = self.maxHP = 50  # should be ~1100
-        self.attackIntervals = (-1, 100, 300, 400, 1000) # timers for each attack
+        self.hp = self.maxHP = 1100 if not DEBUG else 50
+        self.attackIntervals = (-1, 100, 300, 400, 1000)  # timers for each attack
         self.attacks = (self.laserAttack, self.spiralAttack, self.attack2, self.attack3, self.wallOfDeath)
         self.shotAngle = 0
         self.shotIncrement = 5.32
