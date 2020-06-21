@@ -23,7 +23,7 @@ class Laser:
 
     def move(self, startPoint):  #collision detection - check if the angles are the same
         self.startPoint = startPoint
-        targetPoint = self.target.location
+        targetPoint = self.target.rect.center
         y = targetPoint[1] - startPoint[1]
         x = targetPoint[0] - startPoint[0]
         targetDirection = (degrees(atan2(y, x)) + 360) % 360

@@ -1,5 +1,5 @@
-# DEBUG = True
-DEBUG = False
+DEBUG = True
+# DEBUG = False
 
 USEREVENT = 24  # any timer should be this or higher
 INVINC_EVENT = USEREVENT + 1

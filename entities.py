@@ -16,15 +16,15 @@ class Entity(pygame.sprite.Sprite):
         self.image_surface.fill(color)
         self.image = self.image_surface.convert()
         self.rect = self.image.get_rect()
-        self.rect.centerx, self.rect.centery = self.location = location
+        self.rect.center = location
         self.level = level
 
     def shootAngle(self, colour, theta, speed=3, dimensions=(10, 3)):
         velocity = [speed * cos(radians(theta)), speed * sin(radians(theta))]
-        self.shots.append(Shot(self.location, dimensions, velocity, colour))
+        self.shots.append(Shot(self.rect.center, dimensions, velocity, colour))
 
     def shootTarget(self, endPoint, colour, speed=7, dimensions=(10, 3)):
-        theta = degrees(atan2(endPoint[1] - self.location[1], endPoint[0] - self.location[0]))
+        theta = degrees(atan2(endPoint[1] - self.rect.centery, endPoint[0] - self.rect.centerx))
         self.shootAngle(colour, theta, speed, dimensions)
 
     def shootGroup(self, colour, startAngle, angleBtwShots, noShots, speed=5, size=(10, 3)):
@@ -74,12 +74,12 @@ class Player(Entity):
 
     def getTarget(self):
         def key(foe):
-            return (self.location[0] - foe.location[0]) ** 2 + (self.location[1] - foe.location[1]) ** 2
+            return (self.rect.centerx - foe.rect.centerx) ** 2 + (self.rect.centery - foe.rect.centery) ** 2
         return min(Foe.foes, key=key)
 
     def showLaser(self, screen):
         if len(Foe.foes) > 0 and self.hasLaser:
-            pygame.draw.line(screen, THECOLORS["gold"], self.location, self.getTarget().location, 6)
+            pygame.draw.line(screen, THECOLORS["gold"], self.rect.center, self.getTarget().rect.center, 6)
 
 
 class Foe(Entity):
@@ -110,8 +110,7 @@ class Foe(Entity):
 
     def updatePos(self):
         """moves foe and makes it stop at its yLimit"""
-        if self.location[1] < self.yLimit:
-            self.location[:] = list(map(sum, zip(self.location, self.speed)))
+        if self.rect.centery < self.yLimit:
             self.rect = self.rect.move(self.speed)
 
     def show(self, screen):
@@ -124,7 +123,7 @@ class Foe(Entity):
 
     def fire(self):
         if self.canAim:
-            self.shootTarget(self.target.location, THECOLORS["blue"])
+            self.shootTarget(self.target.rect.center, THECOLORS["blue"])
         else:
             nShots = 5 + int(self.level ** .6)
             self.shootGroup(THECOLORS["red"], randint(1, 360), (360 / nShots), nShots)
@@ -136,12 +135,12 @@ class Boss(Foe):
     def __init__(self, target):
         super().__init__(80, False, target)
         pygame.time.set_timer(FOE_SHOOT_EVENT, 100)
-        self.hp = self.maxHP = 1100 if not DEBUG else 50
+        self.hp = self.maxHP = 1100 if not DEBUG else 100
         self.attackIntervals = (-1, 100, 300, 400, 1000)  # timers for each attack
         self.attacks = (self.laserAttack, self.spiralAttack, self.attack2, self.attack3, self.wallOfDeath)
         self.shotAngle = 0
         self.shotIncrement = 5.32
-        self.rect.centerx, self.rect.centery = self.location = [700, 0]
+        self.rect.center = [700, 0]
         self.yLimit = 210
         self.curAttackNum = 0
         self.laser = None
@@ -149,13 +148,6 @@ class Boss(Foe):
     @property
     def numAttacks(self):
         return len(self.attacks)
-
-    def switchAttacks(self):
-        self.curAttackNum += 1
-        self.laser = None
-        Foe.shots = []
-        pygame.time.set_timer(FOE_SHOOT_EVENT, self.attackIntervals[self.curAttackNum])
-        self.fire()
 
     def show(self, screen):
         super().show(screen)
@@ -165,14 +157,20 @@ class Boss(Foe):
     def updatePos(self):
         super().updatePos()
         if self.laser:
-            self.laser.move(self.location)
+            self.laser.move(self.rect.center)
 
     def fire(self):
+        hpLost = self.maxHP - self.hp
+        if hpLost > (1 + self.curAttackNum) * (self.maxHP / self.numAttacks):
+            self.curAttackNum += 1
+            self.laser = None
+            Foe.shots = []
+            pygame.time.set_timer(FOE_SHOOT_EVENT, self.attackIntervals[self.curAttackNum])
         self.attacks[self.curAttackNum]()
 
     def laserAttack(self):
         if not self.laser:
-            self.laser = Laser(self.location, self.target)
+            self.laser = Laser(self.rect.center, self.target)
 
 
     def spiralAttack(self):
@@ -184,7 +182,7 @@ class Boss(Foe):
 
     def attack2(self):
         speed = 8
-        self.shootTarget(self.target.location, THECOLORS["blue"], speed)
+        self.shootTarget(self.target.rect.center, THECOLORS["blue"], speed)
         nShots = 4
         speed = 15
         size = [5, 40]
@@ -193,7 +191,7 @@ class Boss(Foe):
 
     def attack3(self):
         speed = randint(4, 8)
-        Foe.shots.append(FollowShot(self.location, [10,3], [speed, 0], self.target))
+        Foe.shots.append(FollowShot(self.rect.center, [10,3], [speed, 0], self.target))
         size = [30, 5]
         nShots = 4
         speed = 15

@@ -12,8 +12,6 @@ def doCollisions():
     for foe in Foe.foes:
         for shot in pygame.sprite.spritecollide(foe, Player.shots, False):
             foe.hp -= 1
-            if type(foe) is Boss and int(foe.hp) in (foe.maxHP * i // foe.numAttacks for i in range(1, foe.numAttacks)):
-                foe.switchAttacks()
         if foe.hp <= 0:
             if type(foe) is Boss:
                 Boss.defeated = True
@@ -21,6 +19,7 @@ def doCollisions():
             bob.levelUp()
     Player.shots = [shot for shot in Player.shots if not pygame.sprite.spritecollideany(shot, Foe.foes)]
     Foe.foes = [foe for foe in Foe.foes if foe.hp > 0]
+
 
 def animate():
     screen.fill([200, 200, 255])
@@ -84,7 +83,7 @@ if __name__ == "__main__":
             elif event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.MOUSEMOTION:  # move
-                bob.rect.centerx, bob.rect.centery = bob.location = event.pos
+                bob.rect.centerx, bob.rect.centery = event.pos
             if started:
                 if event.type == INVINC_EVENT:  # bob invincible timer
                     bob.recolor()

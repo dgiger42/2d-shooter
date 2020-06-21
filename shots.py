@@ -34,7 +34,7 @@ class FollowShot(Shot):
         self.timeFired = time()
 
     def aim(self):
-        targetPos = self.target.location
+        targetPos = self.target.rect.center
         vec = [targetPos[0] - self.location[0], targetPos[1] - self.location[1]]
         dist = sqrt(vec[0] ** 2 + vec[1] ** 2)
         speed = sqrt(self.velocity[0] ** 2 + self.velocity[1] ** 2)
