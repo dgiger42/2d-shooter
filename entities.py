@@ -5,6 +5,8 @@ from random import randint
 from math import degrees, atan2, cos, sin, radians, sqrt
 from shots import Shot, FollowShot
 from laser import Laser
+from util import dist
+import util
 
 
 class Entity(pygame.sprite.Sprite):
@@ -34,12 +36,11 @@ class Entity(pygame.sprite.Sprite):
 
 class Player(Entity):
     shots = []
-    MAX_LIVES = 5 if not DEBUG else 25
+    MAX_LIVES = 5 if not DEBUG else 42
 
     def __init__(self):
         super().__init__([15, 15], THECOLORS["black"], [0, 0], 1)
         self.lives = self.MAX_LIVES
-        pygame.time.set_timer(BOB_SHOOT_EVENT, 400)  # bob's shot timer
         self.invincible = False
         self.hasLaser = False
 
@@ -59,9 +60,14 @@ class Player(Entity):
 
     def fire(self):
         nShots = self.level
-        spreadAngle = 40 - int(30 / pow(self.level, .4))
-        angleBtwShots = spreadAngle / float(nShots + 1)
-        self.shootGroup(THECOLORS["black"], -((90 - spreadAngle/2) + angleBtwShots), angleBtwShots, nShots, 15, size=[5, 5])
+        shotSpeed = 15
+        if nShots == 1:
+            self.shootAngle(THECOLORS["black"], -90, shotSpeed, (5, 5))
+        else:
+            spreadAngle = min(30, self.level * 5)
+            angleBtwShots = spreadAngle / max(nShots - 1, 1)
+            startAngle = -(90 - spreadAngle/2)
+            self.shootGroup(THECOLORS["black"], startAngle, angleBtwShots, nShots, shotSpeed, size=[5, 5])
 
         #do laser
         if len(Foe.foes) > 0 and self.hasLaser:
@@ -87,17 +93,23 @@ class Foe(Entity):
     foes = []
     nextLevel = 0
     nextCanAim = True
-    nFoes = 10 if not DEBUG else 2
+    nFoes = 10 if not DEBUG else 30
 
     def __init__(self, level , canAim, target):
         self.size = [3 * level + 20] * 2
-        super().__init__(self.size, [185, 0, 0], [randint(20, 1200), 0], level)
-        self.yLimit = randint(1, 450)  # sets place where foe stops moving
-        self.speed = [0, 1 + randint(1, 7) * 30 // FRAMERATE]
-        self.maxHP = 2 + int(level ** 1.5)
+        super().__init__(self.size, [185, 0, 0], [randint(20, 1220), 0], level)
+        self.location = self.rect.center
+        self.velocity = [0, randint(70, 150) / FRAMERATE]
+        self.maxHP = 2 + int(1.1 * level ** 1.4)
         self.hp = self.maxHP
         self.canAim = canAim
+        self.goalPos = (self.rect.centerx, randint(1, 450))
         self.target = target
+        self.alwaysMove = True
+
+    @property
+    def speed(self):
+        return sqrt(self.velocity[0] ** 2 + self.velocity[1] ** 2)
 
     @staticmethod
     def addFoe(target):
@@ -109,9 +121,16 @@ class Foe(Entity):
             Foe.foes.append(Boss(target))
 
     def updatePos(self):
-        """moves foe and makes it stop at its yLimit"""
-        if self.rect.centery < self.yLimit:
-            self.rect = self.rect.move(self.speed)
+        """moves foe and makes it stop at its goal"""
+        while dist(self.goalPos, self.rect.center) <= 1 + self.speed and self.alwaysMove:
+            self.goalPos = (randint(20, 1200), randint(1, 450))
+
+        if dist(self.goalPos, self.rect.center) > 1 + self.speed:
+            dx = self.goalPos[0] - self.rect.centerx
+            dy = self.goalPos[1] - self.rect.centery
+            mag = sqrt(dx ** 2 + dy ** 2)
+            self.velocity = [self.speed * dx / mag, self.speed * dy / mag]
+            util.move(self)
 
     def show(self, screen):
         screen.blit(self.image, self.rect)
@@ -140,10 +159,11 @@ class Boss(Foe):
         self.attacks = (self.laserAttack, self.spiralAttack, self.attack2, self.attack3, self.wallOfDeath)
         self.shotAngle = 0
         self.shotIncrement = 5.32
-        self.rect.center = [700, 0]
-        self.yLimit = 210
+        self.rect.center = self.location = [700, 0]
         self.curAttackNum = 0
         self.laser = None
+        self.alwaysMove = False
+        self.goalPos = (self.rect.centerx, 220)
 
     @property
     def numAttacks(self):

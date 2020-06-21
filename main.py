@@ -66,6 +66,7 @@ def initGame():
 def start():
     pygame.time.set_timer(FOE_ENTER_EVENT, FOE_INTERVAL)  # sets time between foe entry
     pygame.time.set_timer(FOE_SHOOT_EVENT, 500)
+    pygame.time.set_timer(BOB_SHOOT_EVENT, 400)
     Foe.addFoe(bob)
     bob.fire()
 
@@ -77,7 +78,7 @@ if __name__ == "__main__":
 
     while running:
         for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONUP:
+            if event.type == pygame.MOUSEBUTTONUP and not started:
                 started = True
                 start()
             elif event.type == pygame.QUIT:
