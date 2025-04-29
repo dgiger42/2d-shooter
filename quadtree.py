@@ -52,13 +52,24 @@ class QTNode:
         self.rects = remaining_rects
 
     def insert_rect(self, rect: Rect):
-        if len(self.child_nodes) == 0 and len(self.rects) == 0:  # not split yet, and empty
-            self.rects.append(rect)
-        else:
-            if len(self.child_nodes) == 0:
-                self.split()
+        cur_node = self
+        while cur_node.region.contains(rect) and len(cur_node.child_nodes) > 0:
+            for child in cur_node.child_nodes:
+                if child.region.contains(rect):
+                    cur_node = child
+                    break
 
-            # raise NotImplementedError('need to add to right box(es)')
+        cur_node.rects.append(rect)
+        if len(cur_node.rects) > 1:
+            cur_node.split()
+
+        # if len(self.child_nodes) == 0 and len(self.rects) == 0:  # not split yet, and empty
+        #     self.rects.append(rect)
+        # else:
+        #     if len(self.child_nodes) == 0:
+        #         self.split()
+        #
+        #     raise NotImplementedError('need to add to right box(es)')
 
 
 class QuadTree:

@@ -45,7 +45,7 @@ def animate():
     # pygame.draw.line(screen, THECOLORS["red"], (0,0), (300,300), 30)
     if foe_tree is not None:
         for child in foe_tree.root.get_all_nodes():
-            pygame.draw.rect(screen, [0, 0, 255], child.region, width=1)
+            pygame.draw.rect(screen, [0, 0, 255], child.region, width=2)
     for i in range(bob.lives):
         screen.blit(bob.image, [1280 - (30 * i), 30])
     if len(Foe.foes) > 0:

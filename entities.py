@@ -93,7 +93,7 @@ class Foe(Entity):
     foes = []
     nextLevel = 0
     nextCanAim = True
-    nFoes = 10 if not DEBUG else 2
+    nFoes = 10 if not DEBUG else 5
 
     def __init__(self, level , canAim, target):
         self.size = [3 * level + 20] * 2
