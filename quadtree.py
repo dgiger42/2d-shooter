@@ -29,7 +29,7 @@ class QTNode:
     def split(self):
         assert len(self.rects) > 0
         assert len(self.child_nodes) == 0
-        print(f'splitting nodes... ')
+        # print(f'splitting nodes... ')
         sub_w = self.region.width / 2
         sub_h = self.region.height / 2
         top_left = QTNode(Rect(self.region.left, self.region.top, sub_w, sub_h))
@@ -54,13 +54,17 @@ class QTNode:
     def insert_rect(self, rect: Rect):
         cur_node = self
         while cur_node.region.contains(rect) and len(cur_node.child_nodes) > 0:
+            child_contains = False
             for child in cur_node.child_nodes:
                 if child.region.contains(rect):
                     cur_node = child
+                    child_contains = True
                     break
+            if not child_contains:
+                break
 
         cur_node.rects.append(rect)
-        if len(cur_node.rects) > 1:
+        if len(cur_node.rects) > 1 and len(cur_node.child_nodes) == 0:
             cur_node.split()
 
         # if len(self.child_nodes) == 0 and len(self.rects) == 0:  # not split yet, and empty

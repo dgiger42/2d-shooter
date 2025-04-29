@@ -39,7 +39,8 @@ class Player(Entity):
     MAX_LIVES = 5 if not DEBUG else 42
 
     def __init__(self):
-        super().__init__([15, 15], THECOLORS["black"], [0, 0], 1)
+        # super().__init__([15, 15], THECOLORS["black"], [0, 0], 1)
+        super().__init__([15, 15], THECOLORS["black"], [0, 0], 100)
         self.lives = self.MAX_LIVES
         self.invincible = False
         self.hasLaser = False
@@ -93,14 +94,16 @@ class Foe(Entity):
     foes = []
     nextLevel = 0
     nextCanAim = True
-    nFoes = 10 if not DEBUG else 5
+    nFoes = 10 if not DEBUG else 30
 
     def __init__(self, level , canAim, target):
-        self.size = [3 * level + 20] * 2
+        # self.size = [3 * level + 20] * 2  # original
+        self.size = [int(level) + 20] * 2
         super().__init__(self.size, [185, 0, 0], [randint(20, 1220), 0], level)
         self.location = self.rect.center
         self.velocity = [0, randint(70, 150) / FRAMERATE]
-        self.maxHP = 2 + int(1.1 * level ** 1.4)
+        # self.maxHP = 2 + int(1.1 * level ** 1.4)  # original
+        self.maxHP = 2 + int(10 * level ** 1.4)
         self.hp = self.maxHP
         self.canAim = canAim
         self.goalPos = (self.rect.centerx, randint(1, 450))

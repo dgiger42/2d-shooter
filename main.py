@@ -20,12 +20,12 @@ def doCollisions():
         bob.getHit()
 
     if len(Foe.foes) > 1:
-        print()
+        # print()
         foe_tree = QuadTree()
         for foe in Foe.foes:
             foe_tree.root.insert_rect(foe.rect)
-        foe_tree.root.print_nodes()
-        print('\n')
+        # foe_tree.root.print_nodes()
+        # print('\n')
         # print(f'exiting...'); sys.exit(42)
 
     for foe in Foe.foes:
@@ -44,8 +44,9 @@ def animate():
     screen.fill([200, 200, 255])
     # pygame.draw.line(screen, THECOLORS["red"], (0,0), (300,300), 30)
     if foe_tree is not None:
+        grid_color = [0, 0, 255]
         for child in foe_tree.root.get_all_nodes():
-            pygame.draw.rect(screen, [0, 0, 255], child.region, width=2)
+            pygame.draw.rect(screen, grid_color, child.region, width=2)
     for i in range(bob.lives):
         screen.blit(bob.image, [1280 - (30 * i), 30])
     if len(Foe.foes) > 0:
@@ -87,7 +88,8 @@ def initGame():
 def start():
     pygame.time.set_timer(FOE_ENTER_EVENT, FOE_INTERVAL)  # sets time between foe entry
     pygame.time.set_timer(FOE_SHOOT_EVENT, 500)
-    pygame.time.set_timer(BOB_SHOOT_EVENT, 400)
+    # pygame.time.set_timer(BOB_SHOOT_EVENT, 400)  # original
+    pygame.time.set_timer(BOB_SHOOT_EVENT, 80)
     Foe.addFoe(bob)
     bob.fire()
 
@@ -127,7 +129,7 @@ if __name__ == "__main__":
                 print("you lose")
                 running = False
         clock.tick(FRAMERATE)
-        # if i % 10 == 0:  print (f"fps = {clock.get_fps():.2f}")
+        if i % 10 == 0:  print (f"fps = {clock.get_fps():.2f}")
 
         if not running:
             break
