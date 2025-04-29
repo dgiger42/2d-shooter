@@ -3,6 +3,8 @@ from itertools import count
 import sys
 
 import pygame
+
+import shots
 from colordict import THECOLORS
 
 from entities import *
@@ -32,6 +34,8 @@ def doCollisions():
     for foe in Foe.foes:
         for shot in pygame.sprite.spritecollide(foe, Player.shots, False):
             foe.hp -= 1
+
+    for foe in Foe.foes:
         if foe.hp <= 0:
             if type(foe) is Boss:
                 Boss.defeated = True

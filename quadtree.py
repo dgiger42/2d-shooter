@@ -69,9 +69,19 @@ class QTNode:
         if len(cur_node.foes) > 1 and len(cur_node.child_nodes) == 0:
             cur_node.split()
 
-    def find_intersection(self, rect: Rect):
-        cur_node = self
-        raise NotImplementedError()
+    def find_collision(self, rect: Rect):
+        nodes_to_check = deque([self])
+        while len(nodes_to_check) > 0:
+            cur_node = nodes_to_check.popleft()
+            for foe in cur_node.foes:
+                if foe.rect.colliderect(rect):
+                    return foe
+
+            for child in cur_node.child_nodes:
+                if child.region.colliderect(rect):
+                    nodes_to_check.append(child)
+
+        return None
 
 
 
