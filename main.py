@@ -8,9 +8,14 @@ from colordict import THECOLORS
 from entities import *
 from constants import *
 from quadtree import QuadTree
+import quadtree
 
+
+foe_tree = None
 
 def doCollisions():
+    global foe_tree
+
     if pygame.sprite.spritecollideany(bob, Foe.shots) or pygame.sprite.spritecollide(bob, Foe.foes, False):
         bob.getHit()
 
@@ -21,7 +26,7 @@ def doCollisions():
             foe_tree.root.insert_rect(foe.rect)
         foe_tree.root.print_nodes()
         print('\n')
-        print(f'exiting...'); sys.exit(42)
+        # print(f'exiting...'); sys.exit(42)
 
     for foe in Foe.foes:
         for shot in pygame.sprite.spritecollide(foe, Player.shots, False):
@@ -38,6 +43,9 @@ def doCollisions():
 def animate():
     screen.fill([200, 200, 255])
     # pygame.draw.line(screen, THECOLORS["red"], (0,0), (300,300), 30)
+    if foe_tree is not None:
+        for child in foe_tree.root.get_all_nodes():
+            pygame.draw.rect(screen, [0, 0, 255], child.region, width=1)
     for i in range(bob.lives):
         screen.blit(bob.image, [1280 - (30 * i), 30])
     if len(Foe.foes) > 0:
