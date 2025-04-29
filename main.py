@@ -21,19 +21,24 @@ def doCollisions():
     if pygame.sprite.spritecollideany(bob, Foe.shots) or pygame.sprite.spritecollide(bob, Foe.foes, False):
         bob.getHit()
 
-    if len(Foe.foes) > 1:
-        # print()
-        foe_tree = QuadTree()
-        for foe in Foe.foes:
-            foe_tree.root.insert_foe(foe)
-        # foe_tree.root.print_nodes()
-        # print('\n')
-        # print(f'exiting...'); sys.exit(42)
-        pass
-
+    foe_tree = QuadTree()
     for foe in Foe.foes:
-        for shot in pygame.sprite.spritecollide(foe, Player.shots, False):
-            foe.hp -= 1
+        foe_tree.root.insert_foe(foe)
+    # foe_tree.root.print_nodes()
+
+    # for foe in Foe.foes:
+    #     for shot in pygame.sprite.spritecollide(foe, Player.shots, False):
+    #         foe.hp -= 1
+    # Player.shots = [shot for shot in Player.shots if not pygame.sprite.spritecollideany(shot, Foe.foes)]
+
+    shots_to_keep = []
+    for shot in Player.shots:
+        colliding_foe = foe_tree.root.find_collision(shot.rect)
+        if colliding_foe is not None:
+            colliding_foe.hp -= 1
+        else:
+            shots_to_keep.append(shot)
+    Player.shots = shots_to_keep
 
     for foe in Foe.foes:
         if foe.hp <= 0:
@@ -41,7 +46,6 @@ def doCollisions():
                 Boss.defeated = True
                 Foe.shots = []
             bob.levelUp()
-    Player.shots = [shot for shot in Player.shots if not pygame.sprite.spritecollideany(shot, Foe.foes)]
     Foe.foes = [foe for foe in Foe.foes if foe.hp > 0]
 
 
