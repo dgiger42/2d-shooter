@@ -11,14 +11,20 @@ class QTNode:
         self.region: Rect = region
         self.rects: list[Rect] = []
 
-    def print_nodes(self):
-        print(f'printing nodes... ')
+    def get_all_nodes(self):
+        all_nodes = []
         frontier = deque([self])
         while len(frontier) > 0:
             cur_node = frontier.popleft()
-            print(f'cur_node.region: {str(cur_node.region):<27}  {cur_node.rects = }')
+            all_nodes.append(cur_node)
             for child in cur_node.child_nodes:
                 frontier.append(child)
+        return all_nodes
+
+    def print_nodes(self):
+        print(f'printing nodes... ')
+        for node in self.get_all_nodes():
+            print(f'cur_node.region: {str(node.region):<27}  {node.rects = }')
 
     def split(self):
         assert len(self.rects) > 0
@@ -45,8 +51,6 @@ class QTNode:
 
         self.rects = remaining_rects
 
-
-
     def insert_rect(self, rect: Rect):
         if len(self.child_nodes) == 0 and len(self.rects) == 0:  # not split yet, and empty
             self.rects.append(rect)
@@ -55,6 +59,7 @@ class QTNode:
                 self.split()
 
             # raise NotImplementedError('need to add to right box(es)')
+
 
 class QuadTree:
     def __init__(self):
