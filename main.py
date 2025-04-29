@@ -23,7 +23,7 @@ def doCollisions():
         # print()
         foe_tree = QuadTree()
         for foe in Foe.foes:
-            foe_tree.root.insert_rect(foe.rect)
+            foe_tree.root.insert_foe(foe)
         # foe_tree.root.print_nodes()
         # print('\n')
         # print(f'exiting...'); sys.exit(42)

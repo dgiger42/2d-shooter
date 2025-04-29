@@ -3,13 +3,14 @@ from collections import deque
 from pygame import Rect
 
 from constants import *
+from entities import Foe
 
 
 class QTNode:
     def __init__(self, region: Rect):
         self.child_nodes: list[QTNode] = []
         self.region: Rect = region
-        self.rects: list[Rect] = []
+        self.foes: list[Foe] = []
 
     def get_all_nodes(self):
         all_nodes = []
@@ -27,7 +28,7 @@ class QTNode:
             print(f'cur_node.region: {str(node.region):<27}  {node.rects = }')
 
     def split(self):
-        assert len(self.rects) > 0
+        assert len(self.foes) > 0
         assert len(self.child_nodes) == 0
         # print(f'splitting nodes... ')
         sub_w = self.region.width / 2
@@ -38,20 +39,21 @@ class QTNode:
         bottom_right = QTNode(Rect(self.region.centerx, self.region.centery, sub_w, sub_h))
         self.child_nodes = [top_left, top_right, bottom_left, bottom_right]
 
-        remaining_rects = []
-        for rect in self.rects:
+        remaining_foes = []
+        for foe in self.foes:
             is_contained = False
             for child in self.child_nodes:
-                if child.region.contains(rect):
+                if child.region.contains(foe.rect):
                     is_contained = True
-                    child.insert_rect(rect)
+                    child.insert_foe(foe)
                     break
             if not is_contained:
-                remaining_rects.append(rect)
+                remaining_foes.append(foe)
 
-        self.rects = remaining_rects
+        self.foes = remaining_foes
 
-    def insert_rect(self, rect: Rect):
+    def insert_foe(self, foe: Foe):
+        rect = foe.rect
         cur_node = self
         while cur_node.region.contains(rect) and len(cur_node.child_nodes) > 0:
             child_contains = False
@@ -63,9 +65,13 @@ class QTNode:
             if not child_contains:
                 break
 
-        cur_node.rects.append(rect)
-        if len(cur_node.rects) > 1 and len(cur_node.child_nodes) == 0:
+        cur_node.foes.append(foe)
+        if len(cur_node.foes) > 1 and len(cur_node.child_nodes) == 0:
             cur_node.split()
+
+    def find_intersection(self, rect: Rect):
+        cur_node = self
+        raise NotImplementedError()
 
 
 
