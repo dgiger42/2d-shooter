@@ -94,8 +94,9 @@ class Foe(Entity):
     foes = []
     nextLevel = 0
     nextCanAim = True
-    nFoes = 10 if not DEBUG else 200
+    # nFoes = 10 if not DEBUG else 200
     # nFoes = 10 if not DEBUG else 20
+    nFoes = 200  # for stress test
 
     def __init__(self, level , canAim, target):
         # self.size = [3 * level + 20] * 2  # original

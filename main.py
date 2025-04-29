@@ -21,24 +21,24 @@ def doCollisions():
     if pygame.sprite.spritecollideany(bob, Foe.shots) or pygame.sprite.spritecollide(bob, Foe.foes, False):
         bob.getHit()
 
-    foe_tree = QuadTree()
+    ######## original version
     for foe in Foe.foes:
-        foe_tree.root.insert_foe(foe)
-    # foe_tree.root.print_nodes()
+        for shot in pygame.sprite.spritecollide(foe, Player.shots, False):
+            foe.hp -= 1
+    Player.shots = [shot for shot in Player.shots if not pygame.sprite.spritecollideany(shot, Foe.foes)]
 
+    ##### Quadtree version
+    # foe_tree = QuadTree()
     # for foe in Foe.foes:
-    #     for shot in pygame.sprite.spritecollide(foe, Player.shots, False):
-    #         foe.hp -= 1
-    # Player.shots = [shot for shot in Player.shots if not pygame.sprite.spritecollideany(shot, Foe.foes)]
-
-    shots_to_keep = []
-    for shot in Player.shots:
-        colliding_foe = foe_tree.root.find_collision(shot.rect)
-        if colliding_foe is not None:
-            colliding_foe.hp -= 1
-        else:
-            shots_to_keep.append(shot)
-    Player.shots = shots_to_keep
+    #     foe_tree.root.insert_foe(foe)
+    # shots_to_keep = []
+    # for shot in Player.shots:
+    #     colliding_foe = foe_tree.root.find_collision(shot.rect)
+    #     if colliding_foe is not None:
+    #         colliding_foe.hp -= 1
+    #     else:
+    #         shots_to_keep.append(shot)
+    # Player.shots = shots_to_keep
 
     for foe in Foe.foes:
         if foe.hp <= 0:
@@ -98,7 +98,7 @@ def start():
     pygame.time.set_timer(FOE_ENTER_EVENT, FOE_INTERVAL)  # sets time between foe entry
     pygame.time.set_timer(FOE_SHOOT_EVENT, 500)
     # pygame.time.set_timer(BOB_SHOOT_EVENT, 400)  # original
-    pygame.time.set_timer(BOB_SHOOT_EVENT, 80)
+    pygame.time.set_timer(BOB_SHOOT_EVENT, 80 if DEBUG else 400)
     Foe.addFoe(bob)
     bob.fire()
 
@@ -107,8 +107,8 @@ if __name__ == "__main__":
     initGame()
     running = True
 
-    # started = False
-    started = True; start()
+    started = False
+    # started = True; start()
 
     for i in count():
         for event in pygame.event.get():
