@@ -20,7 +20,9 @@ class Shot(pygame.sprite.Sprite):
     move = util.move
 
     def isOffScreen(self):
+        # return self.rect.left > 1350 or self.rect.right < 0 or self.rect.top > 700 or self.rect.bottom < 0
         return self.rect.left > 1350 or self.rect.right < 0 or self.rect.top > 700 or self.rect.bottom < 0
+
 
 
 class FollowShot(Shot):

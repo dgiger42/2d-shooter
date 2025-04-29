@@ -27,6 +27,7 @@ def doCollisions():
         # foe_tree.root.print_nodes()
         # print('\n')
         # print(f'exiting...'); sys.exit(42)
+        pass
 
     for foe in Foe.foes:
         for shot in pygame.sprite.spritecollide(foe, Player.shots, False):

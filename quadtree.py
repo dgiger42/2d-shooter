@@ -67,13 +67,6 @@ class QTNode:
         if len(cur_node.rects) > 1 and len(cur_node.child_nodes) == 0:
             cur_node.split()
 
-        # if len(self.child_nodes) == 0 and len(self.rects) == 0:  # not split yet, and empty
-        #     self.rects.append(rect)
-        # else:
-        #     if len(self.child_nodes) == 0:
-        #         self.split()
-        #
-        #     raise NotImplementedError('need to add to right box(es)')
 
 
 class QuadTree:

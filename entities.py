@@ -36,7 +36,7 @@ class Entity(pygame.sprite.Sprite):
 
 class Player(Entity):
     shots = []
-    MAX_LIVES = 5 if not DEBUG else 42
+    MAX_LIVES = 5 if not DEBUG else 100
 
     def __init__(self):
         # super().__init__([15, 15], THECOLORS["black"], [0, 0], 1)
@@ -94,11 +94,11 @@ class Foe(Entity):
     foes = []
     nextLevel = 0
     nextCanAim = True
-    nFoes = 10 if not DEBUG else 100
+    nFoes = 10 if not DEBUG else 200
 
     def __init__(self, level , canAim, target):
         # self.size = [3 * level + 20] * 2  # original
-        self.size = [int(level * 0.1) + 20] * 2
+        self.size = [int(level * 0.00) + 20] * 2
         super().__init__(self.size, [185, 0, 0], [randint(20, 1220), 0], level)
         self.location = self.rect.center
         self.velocity = [0, randint(70, 150) / FRAMERATE]
@@ -148,7 +148,7 @@ class Foe(Entity):
             self.shootTarget(self.target.rect.center, THECOLORS["blue"])
         else:
             # nShots = 5 + int(self.level ** .6)
-            nShots = 5
+            nShots = 2
             self.shootGroup(THECOLORS["red"], randint(1, 360), (360 / nShots), nShots)
 
 
