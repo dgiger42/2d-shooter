@@ -93,7 +93,7 @@ class Foe(Entity):
     foes = []
     nextLevel = 0
     nextCanAim = True
-    nFoes = 10 if not DEBUG else 30
+    nFoes = 10 if not DEBUG else 2
 
     def __init__(self, level , canAim, target):
         self.size = [3 * level + 20] * 2
@@ -158,7 +158,7 @@ class Boss(Foe):
         self.attackIntervals = (-1, 100, 300, 400, 1000)  # timers for each attack
         self.attacks = (self.laserAttack, self.spiralAttack, self.attack2, self.attack3, self.wallOfDeath)
         self.shotAngle = 0
-        self.shotIncrement = 5.32
+        self.shotIncrement = 5.32 
         self.rect.center = self.location = [700, 0]
         self.curAttackNum = 0
         self.laser = None

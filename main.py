@@ -1,14 +1,28 @@
-from colordict import THECOLORS
-import pygame
 from time import time
+from itertools import count
+import sys
+
+import pygame
+from colordict import THECOLORS
+
 from entities import *
 from constants import *
-import pygame.freetype
+from quadtree import QuadTree
 
 
 def doCollisions():
     if pygame.sprite.spritecollideany(bob, Foe.shots) or pygame.sprite.spritecollide(bob, Foe.foes, False):
         bob.getHit()
+
+    if len(Foe.foes) > 1:
+        print()
+        foe_tree = QuadTree()
+        for foe in Foe.foes:
+            foe_tree.root.insert_rect(foe.rect)
+        foe_tree.root.print_nodes()
+        print('\n')
+        print(f'exiting...'); sys.exit(42)
+
     for foe in Foe.foes:
         for shot in pygame.sprite.spritecollide(foe, Player.shots, False):
             foe.hp -= 1
@@ -56,8 +70,7 @@ def initGame():
     global screen, clock, bob
 
     pygame.init()
-    width, height = 1300, 680  # sets window size to 1300, 680
-    screen = pygame.display.set_mode((width, height))
+    screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
     clock = pygame.time.Clock()
     screen.fill([170, 170, 250])
     bob = Player()
@@ -74,9 +87,11 @@ def start():
 if __name__ == "__main__":
     initGame()
     running = True
-    started = False
 
-    while running:
+    # started = False
+    started = True; start()
+
+    for i in count():
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONUP and not started:
                 started = True
@@ -104,5 +119,9 @@ if __name__ == "__main__":
                 print("you lose")
                 running = False
         clock.tick(FRAMERATE)
-        # print ("fps = ", str(clock.get_fps()))
+        # if i % 10 == 0:  print (f"fps = {clock.get_fps():.2f}")
+
+        if not running:
+            break
+
     pygame.quit()
