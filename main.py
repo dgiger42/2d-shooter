@@ -3,14 +3,15 @@ from itertools import count
 import sys
 
 import pygame
+from pygame import Rect
 
 import shots
 from colordict import THECOLORS
-
 from entities import *
 from constants import *
 from quadtree import QuadTree
 import quadtree
+import quadtree2
 
 
 foe_tree = None
@@ -22,23 +23,33 @@ def doCollisions():
         bob.getHit()
 
     ######## original version
-    for foe in Foe.foes:
-        for shot in pygame.sprite.spritecollide(foe, Player.shots, False):
-            foe.hp -= 1
-    Player.shots = [shot for shot in Player.shots if not pygame.sprite.spritecollideany(shot, Foe.foes)]
+    # for foe in Foe.foes:
+    #     for shot in pygame.sprite.spritecollide(foe, Player.shots, False):
+    #         foe.hp -= 1
+    # Player.shots = [shot for shot in Player.shots if not pygame.sprite.spritecollideany(shot, Foe.foes)]
 
     ##### Quadtree version
     # foe_tree = QuadTree()
     # for foe in Foe.foes:
     #     foe_tree.root.insert_foe(foe)
-    # shots_to_keep = []
-    # for shot in Player.shots:
-    #     colliding_foe = foe_tree.root.find_collision(shot.rect)
-    #     if colliding_foe is not None:
-    #         colliding_foe.hp -= 1
-    #     else:
-    #         shots_to_keep.append(shot)
-    # Player.shots = shots_to_keep
+
+    ### 2nd quadtree version
+    foe_tree = quadtree2.QuadTree(
+        items=Foe.foes,
+        bounding_rect=Rect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT)
+    )
+
+    shots_to_keep = []
+    for shot in Player.shots:
+        # colliding_foe = foe_tree.root.find_collision(shot.rect)
+        colliding_foe = next(iter(foe_tree.hit(shot.rect)), None)
+        if colliding_foe is not None:
+            colliding_foe.hp -= 1
+        else:
+            shots_to_keep.append(shot)
+    Player.shots = shots_to_keep
+
+    #################################################33
 
     for foe in Foe.foes:
         if foe.hp <= 0:
@@ -52,10 +63,10 @@ def doCollisions():
 def animate():
     screen.fill([200, 200, 255])
     # pygame.draw.line(screen, THECOLORS["red"], (0,0), (300,300), 30)
-    if foe_tree is not None:
-        grid_color = [0, 0, 255]
-        for child in foe_tree.root.get_all_nodes():
-            pygame.draw.rect(screen, grid_color, child.region, width=2)
+    # if foe_tree is not None:
+    #     grid_color = [0, 0, 255]
+    #     for child in foe_tree.root.get_all_nodes():
+    #         pygame.draw.rect(screen, grid_color, child.region, width=2)
     for i in range(bob.lives):
         screen.blit(bob.image, [1280 - (30 * i), 30])
     if len(Foe.foes) > 0:
@@ -107,8 +118,8 @@ if __name__ == "__main__":
     initGame()
     running = True
 
-    started = False
-    # started = True; start()
+    # started = False
+    started = True; start()
 
     for i in count():
         for event in pygame.event.get():
