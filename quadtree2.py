@@ -1,7 +1,8 @@
 # this 2nd quadtree implementation is a different kind from the one I implemented
 # This one is taken from this link:
 # https://www.pygame.org/wiki/QuadTree?action=view
-
+# I copy/pasted this quadtree implementation and then made minor modifications
+# I wrote the other one from scratch
 
 
 from pygame import Rect
@@ -26,7 +27,7 @@ class QuadTree(object):
     [1] http://mu.arete.cc/pcr/syntax/quadtree/1/quadtree.py
     """
 
-    def __init__(self, items, depth=8, bounding_rect=None):
+    def __init__(self, items, depth=3, bounding_rect=None):
         """Creates a quad-tree.
 
         @param items:
@@ -108,16 +109,23 @@ class QuadTree(object):
         """
 
         # Find the hits at the current level.
-        hits = set([self.items[n] for n in rect.collidelistall(self.items)])
+        # hits = set([self.items[n] for n in rect.collidelistall(self.items)])
+        if len(self.items) > 0:
+            # print('checking')
+            hit_indices = [rect.collidelist(self.items)]
+            hits = [self.items[n] for n in hit_indices if n != -1]
+        else:
+            # print('not checking')
+            hits = []
 
         # Recursively check the lower quadrants.
         if self.nw and rect.left <= self.cx and rect.top <= self.cy:
-            hits |= self.nw.hit(rect)
+            hits += self.nw.hit(rect)
         if self.sw and rect.left <= self.cx and rect.bottom >= self.cy:
-            hits |= self.sw.hit(rect)
+            hits += self.sw.hit(rect)
         if self.ne and rect.right >= self.cx and rect.top <= self.cy:
-            hits |= self.ne.hit(rect)
+            hits += self.ne.hit(rect)
         if self.se and rect.right >= self.cx and rect.bottom >= self.cy:
-            hits |= self.se.hit(rect)
+            hits += self.se.hit(rect)
 
         return hits

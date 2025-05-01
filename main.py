@@ -29,20 +29,20 @@ def doCollisions():
     # Player.shots = [shot for shot in Player.shots if not pygame.sprite.spritecollideany(shot, Foe.foes)]
 
     ##### Quadtree version
-    # foe_tree = QuadTree()
-    # for foe in Foe.foes:
-    #     foe_tree.root.insert_foe(foe)
+    foe_tree = QuadTree()
+    for foe in Foe.foes:
+        foe_tree.root.insert_foe(foe)
 
     ### 2nd quadtree version
-    foe_tree = quadtree2.QuadTree(
-        items=Foe.foes,
-        bounding_rect=Rect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT)
-    )
+    # foe_tree = quadtree2.QuadTree(
+    #     items=Foe.foes,
+    #     bounding_rect=Rect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT)
+    # )
 
     shots_to_keep = []
     for shot in Player.shots:
-        # colliding_foe = foe_tree.root.find_collision(shot.rect)
-        colliding_foe = next(iter(foe_tree.hit(shot.rect)), None)
+        colliding_foe = foe_tree.root.find_collision(shot.rect)
+        # colliding_foe = next(iter(foe_tree.hit(shot.rect)), None)
         if colliding_foe is not None:
             colliding_foe.hp -= 1
         else:
@@ -63,10 +63,10 @@ def doCollisions():
 def animate():
     screen.fill([200, 200, 255])
     # pygame.draw.line(screen, THECOLORS["red"], (0,0), (300,300), 30)
-    # if foe_tree is not None:
-    #     grid_color = [0, 0, 255]
-    #     for child in foe_tree.root.get_all_nodes():
-    #         pygame.draw.rect(screen, grid_color, child.region, width=2)
+    if foe_tree is not None:
+        grid_color = [0, 0, 255]
+        for child in foe_tree.root.get_all_nodes():
+            pygame.draw.rect(screen, grid_color, child.region, width=2)
     for i in range(bob.lives):
         screen.blit(bob.image, [1280 - (30 * i), 30])
     if len(Foe.foes) > 0:
